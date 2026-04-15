@@ -194,7 +194,7 @@ int64_t gpu_frame_pacing_update(void) {
         /* Running late; dropped a frame */
         g_frame_pace.dropped_frames++;
         if (g_frame_pace.dropped_frames % 30 == 1) {
-            LOGW("Running late on frame %ld (dropped %u frames so far)",
+            LOGW("Running late on frame %" PRId64 " (dropped %u frames so far)",
                  g_frame_pace.frame_count, g_frame_pace.dropped_frames);
         }
         g_frame_pace.last_frame_time = current_time;
