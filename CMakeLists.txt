@@ -62,5 +62,15 @@ install(FILES android/openxr_layer_manifest.json
 )
 
 # ============================================================================
+# Host server (optional, set CMAKE_BUILD_HOST_SERVER to ON to include)
+# ============================================================================
+
+option(CMAKE_BUILD_HOST_SERVER "Build host-side waydroid-xr-server" ON)
+
+if(CMAKE_BUILD_HOST_SERVER)
+    add_subdirectory(host)
+endif()
+
+# ============================================================================
 # Android NDK build wrapper (alternative to CMake — see scripts/build_ndk.sh)
 # ============================================================================

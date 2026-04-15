@@ -4,7 +4,7 @@
 
 Enables Meta Quest Android APKs to run inside a [Waydroid](https://waydro.id/) container on Linux, bridging proprietary Meta OpenXR extensions to a host PCVR runtime (Monado, SteamVR).
 
-> **Status:** Foundation / proof-of-concept. The layer loads, extensions enumerate correctly, and stub functions prevent crashes. The IPC bridge to the host runtime is scaffolded but the full frame transport layer is not yet implemented.
+> **Status:** Foundation / proof-of-concept. The layer loads, extensions enumerate correctly, and stub functions prevent crashes. The IPC bridge to the host runtime is scaffolded. **Phase 2 (frame transport) is in progress:** Host server receives frames via DMA-BUF IPC; GPU import and composition are stubbed pending full implementation.
 
 ---
 
@@ -34,8 +34,10 @@ Enables Meta Quest Android APKs to run inside a [Waydroid](https://waydro.id/) c
 ┌──────────────────────────────────▼─────────────────────────┐
 │  Host Linux                                                 │
 │                                                            │
-│   waydroid-xr-server (TODO: separate repo)                 │
-│     │                                                      │
+│   waydroid-xr-server  (in host/ subdirectory)              │
+│     │  • Listens for container IPC connections             │
+│     │  • Imports DMA-BUF frame buffers                      │
+│     │  • Submits quad layers to OpenXR runtime             │
 │     ▼                                                      │
 │   Monado OpenXR runtime  (or SteamVR via OpenComposite)    │
 │     │                                                      │
@@ -102,6 +104,27 @@ sudo cp dist/android-arm64/vendor/etc/openxr/1/api_layers/implicit.d/*.json \
 sudo umount /mnt/waydroid
 waydroid session start
 ```
+
+### Build (Host Server, Linux)
+
+The host-side server receives frame buffers from the container and composites
+them to your PCVR runtime. It requires CMake, the Khronos OpenXR SDK, and a
+local OpenXR runtime (Monado, SteamVR, etc.).
+
+```bash
+# Build host server standalone
+./scripts/build_host_server.sh
+
+# Or build everything (container layer + host):
+mkdir build && cd build
+cmake -DCMAKE_BUILD_HOST_SERVER=ON ..
+cmake --build . -j$(nproc)
+```
+
+Output: `build-host/waydroid_xr_server`
+
+See [host/README.md](host/README.md) for full documentation on running and
+debugging the host server.
 
 ---
 
