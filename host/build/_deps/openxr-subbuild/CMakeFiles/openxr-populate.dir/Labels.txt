@@ -1,0 +1,14 @@
+# Target labels
+ openxr-populate
+# Source files and their labels
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/CMakeFiles/openxr-populate
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/CMakeFiles/openxr-populate.rule
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/CMakeFiles/openxr-populate-complete.rule
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/openxr-populate-prefix/src/openxr-populate-stamp/openxr-populate-build.rule
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/openxr-populate-prefix/src/openxr-populate-stamp/openxr-populate-configure.rule
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/openxr-populate-prefix/src/openxr-populate-stamp/openxr-populate-download.rule
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/openxr-populate-prefix/src/openxr-populate-stamp/openxr-populate-install.rule
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/openxr-populate-prefix/src/openxr-populate-stamp/openxr-populate-mkdir.rule
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/openxr-populate-prefix/src/openxr-populate-stamp/openxr-populate-patch.rule
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/openxr-populate-prefix/src/openxr-populate-stamp/openxr-populate-test.rule
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/openxr-populate-prefix/src/openxr-populate-stamp/openxr-populate-update.rule

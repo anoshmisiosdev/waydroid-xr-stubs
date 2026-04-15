@@ -1,0 +1,1 @@
+/usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/test_gpu_integration.dir/test/test_gpu_integration.c.o CMakeFiles/test_gpu_integration.dir/src/dma_buf_import.c.o CMakeFiles/test_gpu_integration.dir/src/gpu_sync.c.o CMakeFiles/test_gpu_integration.dir/src/graphics_binding.c.o -o test_gpu_integration  -lpthread

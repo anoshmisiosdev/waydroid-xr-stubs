@@ -8,6 +8,8 @@
  */
 
 #include "openxr_host.h"
+#include "graphics_binding.h"
+#include "gpu_sync.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -57,8 +59,10 @@ typedef struct {
     XrCompositionLayerQuad  layers[2];  /* left and right eye quad layers */
     uint32_t                layer_count;
 
-    /* Frame timing */
+    /* Frame timing and synchronization */
     XrFrameState            frame_state;
+    GpuFence               *frame_fence;
+    float                   target_refresh_rate;
 } OxrHostState;
 
 struct OxrHost {
@@ -111,15 +115,38 @@ static bool get_system(OxrHostState *state) {
 }
 
 static bool create_session(OxrHostState *state) {
-    /* Note: For a full implementation, you'd select a graphics binding
-     * (EGL, Vulkan, etc.) based on detected capabilities. This is a minimal
-     * stub that creates a session without graphics binding, which some
-     * runtimes may support for headless operation. */
+    /*
+     * Set up graphics binding if available.
+     * Tries EGL/OpenGL first, then Vulkan, then headless.
+     */
+
+    void *graphics_binding = NULL;
+    GraphicsApi selected_api = GRAPHICS_API_UNKNOWN;
+
+    /* Try EGL/OpenGL */
+    graphics_binding = graphics_binding_init_egl();
+    if (graphics_binding) {
+        selected_api = GRAPHICS_API_OPENGL;
+        LOGI("Using OpenGL graphics binding");
+    }
+
+    /* If OpenGL unavailable, try Vulkan */
+    if (!graphics_binding) {
+        graphics_binding = graphics_binding_init_vulkan(state->instance, state->system_id);
+        if (graphics_binding) {
+            selected_api = GRAPHICS_API_VULKAN;
+            LOGI("Using Vulkan graphics binding");
+        }
+    }
+
+    if (!graphics_binding) {
+        LOGW("No graphics binding available; using headless mode");
+    }
 
     XrSessionCreateInfo info = {
         .type = XR_TYPE_SESSION_CREATE_INFO,
         .systemId = state->system_id,
-        .next = NULL,  /* Would set graphics binding here */
+        .next = graphics_binding,
     };
 
     XR_CHECK(xrCreateSession(state->instance, &info, &state->session),
@@ -183,6 +210,13 @@ static bool create_swapchain(OxrHostState *state) {
  * ========================================================================= */
 
 static bool begin_frame(OxrHostState *state) {
+    /* Check GPU frame pacing */
+    int64_t wait_ns = gpu_frame_pacing_update();
+    if (wait_ns > 0) {
+        /* Can sleep here if needed for frame rate control */
+        /* usleep(wait_ns / 1000); */
+    }
+
     XrFrameWaitInfo wait_info = {
         .type = XR_TYPE_FRAME_WAIT_INFO,
     };
@@ -286,12 +320,29 @@ bool oxr_host_create_session(OxrHost *host) {
         return false;
     }
 
+    /* Initialize GPU synchronization and frame pacing */
+    host->state.frame_fence = gpu_fence_create();
+    host->state.target_refresh_rate = 90.0f;  /* Default to 90 Hz */
+
+    gpu_frame_pacing_init(host->state.target_refresh_rate);
+
     LOGI("OpenXR session created and ready for composition");
+    LOGI("GPU sync and frame pacing initialized (target: %.1f Hz)",
+         host->state.target_refresh_rate);
+
     return true;
 }
 
 void oxr_host_destroy_session(OxrHost *host) {
     if (!host) return;
+
+    /* Clean up GPU resources */
+    if (host->state.frame_fence) {
+        gpu_fence_destroy(host->state.frame_fence);
+        host->state.frame_fence = NULL;
+    }
+
+    graphics_binding_shutdown();
 
     if (host->state.play_space) {
         xrDestroySpace(host->state.play_space);
@@ -341,8 +392,8 @@ bool oxr_host_submit_layer(OxrHost *host, const OxrLayerParams *layer) {
     quad->pose.orientation.w = layer->quat_w;
 
     /* Set size */
-    quad->extentWidth = layer->width * layer->scale / 1024.0f;
-    quad->extentHeight = layer->height * layer->scale / 1024.0f;
+    quad->size.width = layer->width * layer->scale / 1024.0f;
+    quad->size.height = layer->height * layer->scale / 1024.0f;
 
     /* Placeholder: swapchain images would contain the imported DMA-BUF texture */
     quad->subImage.swapchain = host->state.swapchain;

@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

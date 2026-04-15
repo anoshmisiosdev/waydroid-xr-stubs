@@ -1,0 +1,3 @@
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/CMakeFiles/openxr-populate.dir
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/CMakeFiles/edit_cache.dir
+/Users/riyananosh/waydroid-xr-stubs/host/build/_deps/openxr-subbuild/CMakeFiles/rebuild_cache.dir

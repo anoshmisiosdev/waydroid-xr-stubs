@@ -2,7 +2,8 @@
  * dma_buf_import.c — DMA-BUF Buffer Import Implementation
  *
  * Imports DMA-BUF file descriptors as GPU textures/buffers for rendering.
- * Supports both OpenGL and Vulkan pipelines.
+ * Supports both OpenGL (via EGL_EXT_image_dma_buf_import) and Vulkan
+ * (VK_EXT_external_memory_dma_buf).
  *
  * License: Apache 2.0
  */
@@ -14,6 +15,16 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <dirent.h>
+
+/* EGL/GL headers (build-time optional) */
+#ifdef HAS_EGL
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
 
 #define LOG(level, fmt, ...) \
     fprintf(stderr, "[waydroid-xr-server] " level ": " fmt "\n", ##__VA_ARGS__)
