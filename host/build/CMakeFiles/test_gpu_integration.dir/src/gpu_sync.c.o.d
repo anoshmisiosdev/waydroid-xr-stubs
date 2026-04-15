@@ -1,4 +1,4 @@
-CMakeFiles/waydroid_xr_server.dir/src/gpu_sync.c.o: \
+CMakeFiles/test_gpu_integration.dir/src/gpu_sync.c.o: \
   /Users/riyananosh/waydroid-xr-stubs/host/src/gpu_sync.c \
   /Users/riyananosh/waydroid-xr-stubs/host/src/gpu_sync.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
