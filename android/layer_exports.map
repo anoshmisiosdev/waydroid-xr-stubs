@@ -1,0 +1,10 @@
+/* layer_exports.map
+ * Only the negotiation symbol is exported from the layer .so.
+ * Everything else is internal.
+ */
+{
+    global:
+        xrNegotiateLoaderApiLayerInterface;
+    local:
+        *;
+};
